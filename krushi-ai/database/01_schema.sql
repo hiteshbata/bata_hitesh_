@@ -78,3 +78,12 @@ CREATE TABLE crop_reports (
 CREATE INDEX idx_farmers_phone ON farmers(phone_number);
 CREATE INDEX idx_conversations_farmer_id ON conversations(farmer_id);
 CREATE INDEX idx_villages_normalized_name ON villages(normalized_name);
+
+-- For MVP Backend Operations: Disable RLS so the FastAPI/Celery workers can insert records.
+-- In production, if RLS is enabled, ensure the backend SUPABASE_KEY is the service_role key, not anon.
+ALTER TABLE farmers DISABLE ROW LEVEL SECURITY;
+ALTER TABLE conversations DISABLE ROW LEVEL SECURITY;
+ALTER TABLE villages DISABLE ROW LEVEL SECURITY;
+ALTER TABLE crop_reports DISABLE ROW LEVEL SECURITY;
+ALTER TABLE farmer_context DISABLE ROW LEVEL SECURITY;
+ALTER TABLE prompt_templates DISABLE ROW LEVEL SECURITY;
