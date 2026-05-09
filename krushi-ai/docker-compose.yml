@@ -24,7 +24,7 @@ services:
     build:
       context: ./apps/api
       dockerfile: Dockerfile
-    command: celery -A app.core.celery_app worker --loglevel=info
+    command: celery -A app.core.celery_app worker -Q main-queue --loglevel=info
     volumes:
       - ./apps/api:/app
     depends_on:
