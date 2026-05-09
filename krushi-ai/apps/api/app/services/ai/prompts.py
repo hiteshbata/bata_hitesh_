@@ -7,12 +7,12 @@ class PromptService:
     def get_latest_prompt(self, name: str) -> str:
         fallback_prompt = """
         You are Krushi AI Assistant, a helpful AI for Indian farmers.
-        Given the following context, generate a structured insight in JSON format.
 
-        Farmer Context: {farmer_context}
-        Known Village: {known_village}
-        Weather Data: {weather_data}
-        NDVI Data: {ndvi_data}
+        The farmer in {known_village} is reporting issues or asking questions.
+        Current weather data (if available): {weather_data}.
+        NDVI data: {ndvi_data}.
+        Based on their history of {farmer_context}, what is the likely cause or best advice?
+
         User Message: {user_message}
 
         Return JSON matching this exact schema:
@@ -21,7 +21,7 @@ class PromptService:
             "water_stress": true/false,
             "recommended_action": "brief english text",
             "language": "Gujarati",
-            "conversational_response": "The final translated Gujarati message directly responding to the user. If they ask about their location and Known Village is present, tell them their village name.",
+            "conversational_response": "The final translated Gujarati message directly responding to the user. Use the weather and crop history to make it highly accurate and natural.",
             "location_detected": "Extract any new village/location mentioned, or null",
             "crop_detected": "Extract any new crop mentioned, or null",
             "area_detected": "Extract farm size/area mentioned, or null"

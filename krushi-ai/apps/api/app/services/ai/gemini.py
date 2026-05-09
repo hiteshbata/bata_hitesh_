@@ -9,9 +9,9 @@ class GeminiService:
         self.model = genai.GenerativeModel('models/gemini-2.0-flash',
             system_instruction="You are an expert agricultural AI. Always return valid JSON matching the exact schema requested.")
 
-    def generate_insight(self, system_prompt: str) -> StructuredInsight:
+    async def generate_insight(self, system_prompt: str) -> StructuredInsight:
         try:
-            response = self.model.generate_content(
+            response = await self.model.generate_content_async(
                 system_prompt,
                 generation_config=genai.GenerationConfig(
                     response_mime_type="application/json"
@@ -29,5 +29,8 @@ class GeminiService:
                 water_stress=False,
                 recommended_action="Unable to analyze at this moment.",
                 language="English",
-                conversational_response="I'm sorry, I couldn't process your request right now. Please try again later."
+                conversational_response="I'm sorry, I couldn't process your request right now. Please try again later.",
+                location_detected=None,
+                crop_detected=None,
+                area_detected=None
             )

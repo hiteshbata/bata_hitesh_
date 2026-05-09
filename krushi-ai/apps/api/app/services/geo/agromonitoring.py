@@ -16,5 +16,6 @@ class AgroMonitoringService:
                 return {"error": str(e), "message": "Weather data unavailable"}
 
     @classmethod
-    async def get_ndvi(cls, poly_id: str, start: int, end: int) -> dict:
-        return {"ndvi_mean": 0.65, "status": "Healthy (Mock)"}
+    async def get_ndvi(cls, poly_id: str, lat: float, lon: float) -> dict:
+        # In a real app we would use the actual lat/lon or poly_id to fetch NDVI here
+        return {"ndvi_mean": 0.65, "status": "Healthy (Mock)", "lat": lat, "lon": lon}
