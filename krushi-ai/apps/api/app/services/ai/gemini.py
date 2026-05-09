@@ -6,7 +6,7 @@ from app.schemas.ai import StructuredInsight
 class GeminiService:
     def __init__(self):
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        self.model = genai.GenerativeModel('gemini-1.5-flash-latest',
+        self.model = genai.GenerativeModel('models/gemini-2.0-flash',
             system_instruction="You are an expert agricultural AI. Always return valid JSON matching the exact schema requested.")
 
     def generate_insight(self, system_prompt: str) -> StructuredInsight:
