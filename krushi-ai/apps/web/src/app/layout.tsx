@@ -1,20 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, Roboto_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import Sidebar from "@/components/layout/Sidebar";
 
-const interFont = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
-const robotoFont = Roboto_Mono({
-  variable: "--font-roboto-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Krushi AI Dashboard",
-  description: "Krushi AI Assistant Admin Dashboard",
+  title: "Krushi AI Admin Dashboard",
+  description: "Dashboard for Krushi AI Assistant for Indian Farmers",
 };
 
 export default function RootLayout({
@@ -24,8 +17,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${interFont.variable} ${robotoFont.variable} antialiased`}>
-        {children}
+      <body className={`${inter.className} bg-gray-50 text-gray-900`}>
+        <div className="flex min-h-screen">
+          <Sidebar />
+          <main className="flex-1 ml-64 p-8">
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );
