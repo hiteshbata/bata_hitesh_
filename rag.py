@@ -1,7 +1,7 @@
 import logging
 from typing import List, Dict, Any
 
-from embeddings import get_supabase, get_openai, create_embedding
+from embeddings import get_supabase, create_embedding
 from config import settings
 from exceptions import RAGSearchError
 

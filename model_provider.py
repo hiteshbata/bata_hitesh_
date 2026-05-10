@@ -1,10 +1,11 @@
 import json
 import logging
 import httpx
-import google.generativeai as genai
 
 from config import settings
 from exceptions import MissingAPIKeyError, ModelAPIError
+from google import genai
+from google.genai import types
 
 class ModelProvider:
 
@@ -97,22 +98,23 @@ class ModelProvider:
         if not settings.GOOGLE_API_KEY:
             raise MissingAPIKeyError("GOOGLE_API_KEY not found in .env")
 
-        genai.configure(api_key=settings.GOOGLE_API_KEY)
-
         system = system_prompt.replace("{context}", context).replace("{question}", user_message)
 
         try:
-            model = genai.GenerativeModel(
-                model_name=self.model,
-                system_instruction=system
-            )
-            response = await model.generate_content_async(
-                user_message,
-                generation_config=genai.GenerationConfig(
+            # 1. Initialize the new Client directly (No more genai.configure)
+            client = genai.Client(api_key=settings.GOOGLE_API_KEY)
+            
+            # 2. Call the AI using the new async syntax
+            response = await client.aio.models.generate_content(
+                model=self.model,
+                contents=user_message,
+                config=types.GenerateContentConfig(
+                    system_instruction=system,
                     max_output_tokens=max_tokens,
                 )
             )
             return response.text
+            
         except Exception as e:
             raise ModelAPIError(f"Google API Error: {str(e)}")
 
