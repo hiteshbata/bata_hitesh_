@@ -50,7 +50,6 @@ BEGIN
 END;
 $$;
 ```
-##replace any mentions of gemini-2.0-flash with the new gemini-3-flash-preview model.
 
 ### 3. API Keys
 *   Get OpenAI API Key (Required for embeddings).

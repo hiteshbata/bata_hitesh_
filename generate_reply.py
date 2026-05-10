@@ -105,7 +105,7 @@ Customer Question: {question}"""
     else:
         active = load_active_model()
         provider = active.get("provider", "google")
-        model = active.get("model", "gemini-3-flash-preview")
+        model = active.get("model", "gemini-2.0-flash")
 
     provider_client = ModelProvider(provider, model)
 

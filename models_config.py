@@ -22,4 +22,4 @@ AVAILABLE_MODELS = {
 }
 
 DEFAULT_PROVIDER = "google"
-DEFAULT_MODEL = "gemini-3-flash-preview"
+DEFAULT_MODEL = "gemini-2.0-flash"

@@ -2,11 +2,11 @@ import os
 import argparse
 import logging
 import asyncio
-from typing import List
+from typing import List, Dict, Any
 
 from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from google import genai
+from openai import AsyncOpenAI
 from supabase import create_client, Client
 
 from config import settings
@@ -15,8 +15,9 @@ from exceptions import RAGSearchError
 # Configure basic logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
-# Initialize Supabase client lazily
+# Initialize clients lazily if they are actually used
 _supabase_client = None
+_openai_client = None
 
 def get_supabase() -> Client:
     global _supabase_client
@@ -26,21 +27,28 @@ def get_supabase() -> Client:
         _supabase_client = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
     return _supabase_client
 
+def get_openai() -> AsyncOpenAI:
+    global _openai_client
+    if _openai_client is None:
+        if not settings.OPENAI_API_KEY:
+            raise ValueError("OpenAI API Key must be set for embeddings.")
+        _openai_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+    return _openai_client
+
 async def create_embedding(text: str) -> List[float]:
-    client = genai.Client(api_key=settings.GOOGLE_API_KEY)
-    from google.genai import types 
-    
-    result = client.models.embed_content(
-        model="gemini-embedding-2",
-        contents=text,
-        config=types.EmbedContentConfig(output_dimensionality=768) # Shrinks it!
+    """Generates an embedding for the given text using OpenAI."""
+    client = get_openai()
+    response = await client.embeddings.create(
+        model="text-embedding-3-small",
+        input=text
     )
-    return result.embeddings[0].values
+    return response.data[0].embedding
 
 def check_supabase_connection():
     """Verifies that the required table exists in Supabase."""
     supabase = get_supabase()
     try:
+        # Check if the table exists by doing a dummy query
         supabase.table("business_docs").select("id").limit(1).execute()
         logging.info("Supabase connection verified. Table 'business_docs' exists.")
     except Exception as e:
@@ -55,7 +63,7 @@ def check_supabase_connection():
           id BIGSERIAL PRIMARY KEY,
           business_id TEXT NOT NULL,
           content TEXT NOT NULL,
-          embedding VECTOR(768),
+          embedding VECTOR(1536),
           created_at TIMESTAMP DEFAULT NOW()
         );
         CREATE INDEX ON business_docs
